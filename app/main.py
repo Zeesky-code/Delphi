@@ -1,7 +1,10 @@
+import uuid
+import asyncio
+
 from fastapi import FastAPI, BackgroundTasks
 from .models.research import ResearchRequest, TaskResponse
 from .tools.news import fetch_news
-import uuid
+from .tools.financials import fetch_company_overview
 
 app = FastAPI(
     title="Delphi",
@@ -18,10 +21,21 @@ async def run_delphi_workflow(ticker: str, query: str):
     print(f"--- Starting Delphi Workflow for {ticker} ---")
     print(f"Query: {query}")
     
-    articles = await fetch_news(ticker)
-    print(f"Found {len(articles)} articles for {ticker}:")
-    for article in articles:
-        print(f"- {article['title']}")
+    news_task = fetch_news(ticker)
+    overview_task = fetch_company_overview(ticker)
+    
+    results = await asyncio.gather(news_task, overview_task)
+    
+    articles = results[0]
+    overview = results[1]
+
+    print(f"Found {len(articles)} articles for {ticker}.")
+    
+    if overview:
+        print(f"Company Overview for {overview.get('Name')}:")
+        print(f"  - Description: {overview.get('Description', 'N/A')[:150]}...")
+        print(f"  - P/E Ratio: {overview.get('PERatio', 'N/A')}")
+        print(f"  - Market Cap: {overview.get('MarketCapitalization', 'N/A')}")
     
     print("--- Delphi Workflow Finished ---")
 
