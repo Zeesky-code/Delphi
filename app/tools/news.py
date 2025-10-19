@@ -1,8 +1,11 @@
 import httpx
 from ..core.config import settings
+from cachetools import cached
+from ..core.cache import api_cache 
 
 NEWS_API_BASE_URL = "https://newsapi.org/v2/everything"
 
+@cached(api_cache)
 async def fetch_news(query: str) -> list[dict]:
     """
     Fetches recent news articles for a given query from NewsAPI.

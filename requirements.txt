@@ -3,3 +3,4 @@ uvicorn[standard]
 python-dotenv
 mistralai==0.4.2
 httpx
+cachetools

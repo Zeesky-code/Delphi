@@ -1,8 +1,10 @@
 import httpx
 from ..core.config import settings
-
+from ..core.cache import api_cache
+from cachetools import cached 
 ALPHA_VANTAGE_BASE_URL = "https://www.alphavantage.co/query"
 
+@cached(api_cache)
 async def fetch_company_overview(ticker: str) -> dict:
     """
     Fetches company overview and key financial metrics from Alpha Vantage.
