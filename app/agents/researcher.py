@@ -12,6 +12,7 @@ if settings.MISTRAL_API_KEY:
 AVAILABLE_TOOLS = {
     "fetch_news": news.fetch_news,
     "fetch_company_overview": financials.fetch_company_overview,
+    "fetch_historical_prices": financials.fetch_historical_prices,
 }
 
 TOOLS_SCHEMA = [
@@ -37,6 +38,23 @@ TOOLS_SCHEMA = [
         "function": {
             "name": "fetch_company_overview",
             "description": "Fetches company overview and key financial metrics from Alpha Vantage.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "ticker": {
+                        "type": "string",
+                        "description": "The stock ticker symbol of the company.",
+                    }
+                },
+                "required": ["ticker"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_historical_prices",
+            "description": "Fetches the last 100 days of historical daily stock prices for a given stock ticker.",
             "parameters": {
                 "type": "object",
                 "properties": {
